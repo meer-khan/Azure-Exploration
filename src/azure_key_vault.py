@@ -2,29 +2,62 @@ import os
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential, ClientSecretCredential
 from decouple import config
-keyVaultName = "KV_NAME"
-KVUri = f"https://KV_NAME.vault.azure.net"
+from dotenv import load_dotenv
 
-credential = DefaultAzureCredential()
-client = SecretClient(vault_url=KVUri, credential=credential)
+load_dotenv()
 
-secretName = "SECRET_NAME"
-secretValue = "SECRET_VALUE"
+client_id = os.environ.get("AZURECLIENTID")
+tenant_id = os.environ.get("AZURETENANTID")
+client_secret = os.environ.get("AZURECLIENTSECRET")
+vault_url = os.environ.get("AZUREVAULTURL")
 
-print(f"Creating a secret in KV_NAME called '{secretName}' with the value '{secretValue}' ...")
+# client_id = config("AZURECLIENTID")
+# tenant_id = config("AZURETENANTID")
+# client_secret = config("AZURECLIENTSECRET")
+# vault_url = config("AZUREVAULTURL")
 
-client.set_secret(secretName, secretValue)
+credentials = ClientSecretCredential(
+    tenant_id=tenant_id, client_id=client_id, client_secret=client_secret
+)
 
-print(" done.")
+client = SecretClient(vault_url=vault_url, credential=credentials)
 
-print(f"Retrieving your secret from KV_NAME.")
 
-retrieved_secret = client.get_secret(secretName)
 
-print(f"Your secret is '{retrieved_secret.value}'.")
+
+# * SETTING
+
+# secretName = "DUMMY2"
+# secretValue = "I am going to set a very secret valur on azure"
+
+# print(
+#     f"Creating a secret in KV_NAME called '{secretName}' with the value '{secretValue}' ..."
+# )
+
+# client.set_secret(secretName, secretValue)
+
+# print(" done.")
+
+
+# * RETRIVAL
+
+# secretName = "DUMMY2" 
+
+# print(f"Retrieving your secret.")
+
+# retrieved_secret = client.get_secret(secretName)
+
+# print(f"Your secret is '{retrieved_secret.value}'.")
+
+
+# * DELETION 
+
+secretName = "DUMMY2" 
+
 print(f"Deleting your secret from KV_NAME ...")
 
 poller = client.begin_delete_secret(secretName)
+print(poller)
 deleted_secret = poller.result()
-
+print(deleted_secret)
 print(" done.")
