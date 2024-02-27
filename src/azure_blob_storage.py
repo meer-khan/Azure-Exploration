@@ -22,7 +22,7 @@ credentials = ClientSecretCredential(
 
 def get_blob_data():
     
-    container_name = 'storagecommoncontainer'
+    container_name = 'testcontainer'
     blob_name = 'sample3.txt'
 
     # set client to access azure storage container
@@ -52,7 +52,7 @@ def list_blob():
 
 
 def get_multi_blob_data():
-    container_name = 'storagecommoncontainer'
+    container_name = 'testcontainer'
 
     # set client to access azure storage container
     blob_service_client = BlobServiceClient(account_url= account_url, credential= credentials)
