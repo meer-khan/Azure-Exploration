@@ -1,9 +1,0 @@
-{
-    "azureFunctions.deploySubpath": "azure_cosmo_func_demo",
-    "azureFunctions.scmDoBuildDuringDeployment": true,
-    "azureFunctions.projectLanguage": "Python",
-    "azureFunctions.projectRuntime": "~4",
-    "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.projectLanguageModel": 2,
-    "azureFunctions.projectSubpath": "azure_function_demo"
-}

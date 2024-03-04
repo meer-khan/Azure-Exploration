@@ -12,10 +12,12 @@ def create_db(client):
         existing_db = client[database_name]
 
         # Insert a document into a collection (this will create the database if it doesn't exist)
-        collection_test = existing_db["users"]
+        users_colc = existing_db["users"]
+        lease_colc = existing_db["leases"]
 
         return (
-            collection_test
+            users_colc,
+            lease_colc
         )
     except Exception as e:
         print(f"Error: {e}")
@@ -38,6 +40,17 @@ if __name__ == "__main__":
     connection_string = config("PRIMARY_CONNECTION_STRING_MONGO")
     client = pymongo.MongoClient(connection_string)
 
+
+
+    # * Create database
+    users_colc, lease_colc = create_db(client)
+    print(users_colc)
+    email = "shahmirkhan519@gmail.com"
+    password = "0000000"
+    add_user(users_colc, email, password)
+    add_user(lease_colc, email, password)
+    
+
         # Get server information
     # for k, v in client.server_info().items():
         # print("Key: {} , Value: {}".format(k, v))
@@ -58,15 +71,13 @@ if __name__ == "__main__":
     oc_count = client[DB_NAME][COLLCECTION].count_documents({})
     ic(oc_count)
 
-    # * Create database
-    # collection = create_db(client)
-    # print(collection)
+    
 
-    email = "shahmirkhan519@gmail.com"
-    password = "0000000"
+    # email = "shahmirkhan519@gmail.com"
+    # password = "0000000"
     # * Add Record
     
-    add_user(client[DB_NAME][COLLCECTION], email, password)
+    # add_user(client[DB_NAME][COLLCECTION], email, password)
 
 
     # *  FIND RECORD
