@@ -63,14 +63,14 @@ if __name__ == "__main__":
     # print(collection)
 
     email = "shahmirkhan519@gmail.com"
-    password = "12345"
+    password = "0000000"
     # * Add Record
     
-    # add_user(collection, email, password)
+    add_user(client[DB_NAME][COLLCECTION], email, password)
 
 
     # *  FIND RECORD
-    result = find_user(client[DB_NAME][COLLCECTION],email )
-    ic(result)
+    # result = find_user(client[DB_NAME][COLLCECTION],email )
+    # ic(result)
 
 
