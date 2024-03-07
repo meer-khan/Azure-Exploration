@@ -8,8 +8,9 @@
 			"problemMatcher": "$func-python-watch",
 			"isBackground": true,
 			"options": {
-				"cwd": "${workspaceFolder}/azure_function_demo"
-			}
+				"cwd": "${workspaceFolder}/azure_http_trigger"
+			},
+			"dependsOn": "pip install pymongo"
 		}
 	]
 }

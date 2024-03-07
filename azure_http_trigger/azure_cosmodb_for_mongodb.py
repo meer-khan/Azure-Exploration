@@ -3,6 +3,7 @@ import sys
 import pymongo
 from decouple import config
 from icecream import ic
+from bson import ObjectId
 
 def create_db(client):
     try:
@@ -31,6 +32,16 @@ def find_user(collection, email):
     data = collection.find_one({"email": email})
     return data
 
+
+def find_user_by_id(collection, id): 
+    data = collection.find_one({"_id": ObjectId(id)})
+    return data
+
+
+def get_client():
+    connection_string = config("PRIMARY_CONNECTION_STRING_MONGO")
+    client = pymongo.MongoClient(connection_string)
+    return client
 
 if __name__ == "__main__": 
     connection_string = config("PRIMARY_CONNECTION_STRING_MONGO")
