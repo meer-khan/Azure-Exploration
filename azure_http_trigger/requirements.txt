@@ -1,0 +1,10 @@
+asttokens==2.4.1
+azure-functions==1.18.0
+colorama==0.4.6
+dnspython==2.6.1
+executing==2.0.1
+icecream==2.1.3
+Pygments==2.17.2
+pymongo==4.6.2
+python-decouple==3.8
+six==1.16.0
