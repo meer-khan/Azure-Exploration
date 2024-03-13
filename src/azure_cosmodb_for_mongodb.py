@@ -25,6 +25,9 @@ def create_db(client):
 
 
 def add_user(collection, email, password): 
+    ic(email)
+    ic(password)
+    ic(type(collection))
     data = collection.insert_one({"email": email, "password": password})
     return str(data.inserted_id)
 
