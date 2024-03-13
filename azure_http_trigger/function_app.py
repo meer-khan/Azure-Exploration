@@ -1,7 +1,7 @@
 import azure.functions as func
 import logging
 import azure_cosmodb_for_mongodb
-import pymongo , os
+import pymongo, os
 from bson import ObjectId
 from decouple import config
 from azure.keyvault.secrets import SecretClient
@@ -11,23 +11,37 @@ from dotenv import load_dotenv
 import pandas as pd
 import io, tempfile
 
+
+load_dotenv()
+
+client_id = os.environ.get("AZURECLIENTID")
+tenant_id = os.environ.get("AZURETENANTID")
+client_secret = os.environ.get("AZURECLIENTSECRET")
+account_url = os.environ.get("AZURE_STORAGE_URL")
+
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
+
+
+credentials = ClientSecretCredential(
+    tenant_id=tenant_id, client_id=client_id, client_secret=client_secret
+)
+
+
 
 @app.route(route="http_trigger", methods=[func.HttpMethod.GET, func.HttpMethod.POST])
 def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    logging.info("Python HTTP trigger function processed a request.")
 
-    _id = req.params.get('id')
-    container_name = req.params.get('containerName')
-    blob_name = req.params.get('blobName')
-    print("ID IS: ")
-    print(_id)
-    # id = req.get_json("id")
+    id = req.params.get("id")
+    container_name = req.params.get("containerName")
+    blob_name = req.params.get("blobName")
     client = get_client()
     collection = create_db(client)
-    user = find_user_by_id(collection , _id)
+    user = find_user_by_id(collection, id)
     get_blob_data(blob_name=blob_name, container_name=container_name)
-    return func.HttpResponse(f"Hello, {user}. This HTTP triggered function executed successfully.")
+    return func.HttpResponse(
+        f"Hello, {user}. This HTTP triggered function executed successfully."
+    )
 
 
 def create_db(client):
@@ -40,11 +54,9 @@ def create_db(client):
         # Insert a document into a collection (this will create the database if it doesn't exist)
         collection_test = existing_db["users"]
 
-        return (
-            collection_test
-        )
-    except Exception as e:
-        print(f"Error: {e}")
+        return collection_test
+    except Exception as ex:
+        print(ex)
 
 
 def get_client():
@@ -52,41 +64,30 @@ def get_client():
     client = pymongo.MongoClient(connection_string)
     return client
 
-def find_user_by_id(collection, id): 
+
+def find_user_by_id(collection, id):
     data = collection.find_one({"_id": ObjectId(id)})
     return data
 
 
 
-
-load_dotenv()
-
-client_id = os.environ.get("AZURECLIENTID")
-tenant_id = os.environ.get("AZURETENANTID")
-client_secret = os.environ.get("AZURECLIENTSECRET")
-account_url = os.environ.get("AZURE_STORAGE_URL")
-
-
-credentials = ClientSecretCredential(
-    tenant_id=tenant_id, client_id=client_id, client_secret=client_secret
-)
-
-
-
-
 def get_blob_data(container_name, blob_name):
-    
+
     # container_name = 'testcontainer'
     # blob_name = 'sample3.txt'
 
     # set client to access azure storage container
-    blob_service_client = BlobServiceClient(account_url= account_url, credential= credentials)
+    blob_service_client = BlobServiceClient(
+        account_url=account_url, credential=credentials
+    )
 
-    # get the container client 
-    container_client = blob_service_client.get_container_client(container=container_name)
+    # get the container client
+    container_client = blob_service_client.get_container_client(
+        container=container_name
+    )
 
-    # download blob data 
-    blob_client = container_client.get_blob_client(blob= blob_name)
+    # download blob data
+    blob_client = container_client.get_blob_client(blob=blob_name)
 
     blob_data = blob_client.download_blob()
     content = blob_data.readall()
@@ -98,25 +99,25 @@ def get_blob_data(container_name, blob_name):
     print(df)
 
     write_csv_file(df)
-    
 
-def write_csv_file(data_frame): 
+
+def write_csv_file(data_frame: pd.DataFrame):
     # Write DataFrame to a temporary CSV file
-    temp_csv_path = os.path.join(tempfile.gettempdir(), 'temp_file.csv')
-    data_frame.to_csv(temp_csv_path, index=False)
+    # temp_csv_path = os.path.join(tempfile.gettempdir(), "temp_file.csv")
+    # data_frame.to_csv(temp_csv_path, index=False)
 
     # Perform processing on the CSV file (e.g., read it again)
-    processed_df = pd.read_csv(temp_csv_path)
+    # processed_df = pd.read_csv(temp_csv_path)
 
     # Delete the temporary CSV file
-    os.remove(temp_csv_path)
-
+    # os.remove(temp_csv_path)
+    #
     # Alternatively, write DataFrame to a temporary XLSX file
-    temp_xlsx_path = os.path.join(tempfile.gettempdir(), 'temp_file.xlsx')
+    temp_xlsx_path = os.path.join(tempfile.gettempdir(), "temp_file.xlsx")
     data_frame.to_excel(temp_xlsx_path, index=False)
 
     # Perform processing on the XLSX file (e.g., read it again)
     processed_df_xlsx = pd.read_excel(temp_xlsx_path)
-
+    print(processed_df_xlsx)
     # Delete the temporary XLSX file
     os.remove(temp_xlsx_path)
