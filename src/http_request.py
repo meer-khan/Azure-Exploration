@@ -9,8 +9,9 @@ from azure.identity import ClientSecretCredential
 from dotenv import load_dotenv
 import os, pathlib
 
-
+load_dotenv()
 client_id = os.environ.get("AZURECLIENTID")
+ic(client_id)
 tenant_id = os.environ.get("AZURETENANTID")
 client_secret = os.environ.get("AZURECLIENTSECRET")
 account_url = os.environ.get("AZURE_STORAGE_URL")
@@ -40,12 +41,12 @@ connection_string = config("PRIMARY_CONNECTION_STRING_MONGO")
 client = pymongo.MongoClient(connection_string)
 
 collection = create_db(client)
-id = add_user(collection, email, password)
+id = add_user(collection[0], email, password)
 
 
 local_file_path = r"D:\2022\Azure-Exploration\input\SBOM_test_SPDX_License.xlsx"
 blob_name = pathlib.Path(local_file_path).stem
-upload_blob(local_file_path, blob_name)
+upload_blob(local_file_path, blob_name+"_1")
 container_name = 'testcontainer'
 result = requests.post(url, params={"id": id, "blobName": blob_name, "containerName":container_name})
 
