@@ -5,3 +5,4 @@
 - Azure blob Storage
 - Azure CosmosDB for MongoDB
 - Azure KeyVault
+- Azure functions Trigger by HTTP and CosmosDB
